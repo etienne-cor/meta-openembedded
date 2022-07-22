@@ -13,6 +13,11 @@ PYPI_PACKAGE = "supervisor"
 inherit pypi systemd setuptools3
 RDEPENDS:${PN} = "\
     ${PYTHON_PN}-meld3 \
+    ${PYTHON_PN}-io \
+    ${PYTHON_PN}-xmlrpc \
+    ${PYTHON_PN}-resource \
+    ${PYTHON_PN}-setuptools \
+    ${PYTHON_PN}-smtpd \
 "
 
 SRC_URI += "file://supervisord.conf \
