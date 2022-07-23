@@ -2,10 +2,10 @@ DESCRIPTION = "A microbenchmark support library"
 HOMEPAGE = "https://github.com/google/benchmark"
 SECTION = "libs"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=0f6f3bbd074b822ddbb3b4d0e7f8d652"
 
 SRC_URI = "git://github.com/google/benchmark.git;protocol=https;branch=main"
-SRCREV = "0d98dba29d66e93259db7daa53a9327df767a415"
+SRCREV = "d845b7b3a27d54ad96280a29d61fa8988d4fddcf"
 
 S = "${WORKDIR}/git"
 
