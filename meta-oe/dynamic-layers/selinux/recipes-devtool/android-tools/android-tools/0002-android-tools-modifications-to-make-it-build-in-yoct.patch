@@ -1,4 +1,4 @@
-From 4593723194675087ae98ea068b847fd3cc2ee9ce Mon Sep 17 00:00:00 2001
+From 9bcdb7c5662116a4cb54367690f3f0cb4c7a26eb Mon Sep 17 00:00:00 2001
 From: Etienne Cordonnier <ecordonnier@snap.com>
 Date: Fri, 17 Mar 2023 10:33:11 +0100
 Subject: [PATCH] android-tools: modifications to make it build in yocto
@@ -9,10 +9,16 @@ Subject: [PATCH] android-tools: modifications to make it build in yocto
 - fix missing headers
 
 Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
+
+%% original patch: 0002-android-tools-modifications-to-make-it-build-in-yoct.patch
+
+%% original patch: 0002-android-tools-modifications-to-make-it-build-in-yoct.patch
 ---
  debian/system/append2simg.mk                    |  2 +-
+ debian/system/extras/libext4_utils.mk           |  1 +
  debian/system/fastboot.mk                       |  2 +-
  debian/system/img2simg.mk                       |  2 +-
+ debian/system/libadb.mk                         |  1 -
  debian/system/libbacktrace.mk                   |  4 +++-
  debian/system/libbase.mk                        |  2 ++
  debian/system/libcutils.mk                      |  3 ++-
@@ -23,9 +29,9 @@ Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
  debian/system/simg2img.mk                       |  2 +-
  debian/system/simg2simg.mk                      |  2 +-
  frameworks/native/libs/adbd_auth/adbd_auth.cpp  |  2 ++
- packages/modules/adb/adb_listeners.cpp          | 12 ++++++------
+ packages/modules/adb/adb_listeners.cpp          | 14 +++++++-------
  packages/modules/adb/client/transport_local.cpp |  2 +-
- 15 files changed, 28 insertions(+), 17 deletions(-)
+ 17 files changed, 30 insertions(+), 19 deletions(-)
 
 diff --git a/debian/system/append2simg.mk b/debian/system/append2simg.mk
 index 5c5912fa..098cea99 100644
@@ -40,6 +46,18 @@ index 5c5912fa..098cea99 100644
    -lbase \
    -llog \
    -lpthread \
+diff --git a/debian/system/extras/libext4_utils.mk b/debian/system/extras/libext4_utils.mk
+index dffb24a7..a37eb98b 100644
+--- a/debian/system/extras/libext4_utils.mk
++++ b/debian/system/extras/libext4_utils.mk
+@@ -36,6 +36,7 @@ CPPFLAGS += \
+   -Isystem/libbase/include \
+ 
+ debian/out/system/extras/libext4_utils.a: $(OBJECTS_C) $(OBJECTS_CXX)
++	mkdir -p debian/out/system/extras
+ 	ar -rcs $@ $^
+ 
+ $(OBJECTS_C): %.o: %.c
 diff --git a/debian/system/fastboot.mk b/debian/system/fastboot.mk
 index b57bfdff..a05fc1a9 100644
 --- a/debian/system/fastboot.mk
@@ -66,6 +84,18 @@ index df7d395d..87eff63b 100644
    -lbase \
    -llog \
    -lpthread \
+diff --git a/debian/system/libadb.mk b/debian/system/libadb.mk
+index 4465f4c1..fd8be942 100644
+--- a/debian/system/libadb.mk
++++ b/debian/system/libadb.mk
+@@ -88,7 +88,6 @@ SOURCES := \
+ OBJECTS = $(SOURCES:.cpp=.o)
+ 
+ CXXFLAGS += -std=gnu++2a \
+-  -Wexit-time-destructors \
+   -Wno-non-virtual-dtor \
+   -Wno-unused-parameter \
+   -Wno-missing-field-initializers \
 diff --git a/debian/system/libbacktrace.mk b/debian/system/libbacktrace.mk
 index 43ec216f..6fc1d876 100644
 --- a/debian/system/libbacktrace.mk
@@ -235,7 +265,7 @@ index 15bd5c39..ebc74fb3 100644
  #include <string_view>
  #include <tuple>
 diff --git a/packages/modules/adb/adb_listeners.cpp b/packages/modules/adb/adb_listeners.cpp
-index 124e2d8d..88fb75dc 100644
+index 124e2d8d..42903725 100644
 --- a/packages/modules/adb/adb_listeners.cpp
 +++ b/packages/modules/adb/adb_listeners.cpp
 @@ -111,7 +111,7 @@ static void listener_event_func(int _fd, unsigned ev, void* _l)
@@ -274,6 +304,15 @@ index 124e2d8d..88fb75dc 100644
      std::lock_guard<std::mutex> lock(listener_list_mutex);
      auto iter = listener_list.begin();
      while (iter != listener_list.end()) {
+@@ -166,7 +166,7 @@ void remove_all_listeners() EXCLUDES(listener_list_mutex) {
+     }
+ }
+ 
+-void enable_server_sockets() EXCLUDES(listener_list_mutex) {
++void enable_server_sockets() {
+     std::lock_guard<std::mutex> lock(listener_list_mutex);
+     for (auto& l : listener_list) {
+         if (l->connect_to == "*smartsocket*") {
 @@ -176,7 +176,7 @@ void enable_server_sockets() EXCLUDES(listener_list_mutex) {
  }
  
@@ -306,5 +345,5 @@ index 15a07246..c4e5f7f3 100644
      if (it == local_transports.end()) {
          return nullptr;
 -- 
-2.36.1.vfs.0.0
+2.34.1
 

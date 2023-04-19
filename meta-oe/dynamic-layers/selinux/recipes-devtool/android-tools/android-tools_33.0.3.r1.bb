@@ -7,7 +7,8 @@ LIC_FILES_CHKSUM = " \
     file://${COMMON_LICENSE_DIR}/BSD-2-Clause;md5=cb641bc04cda31daea161b1bc15da69f \
     file://${COMMON_LICENSE_DIR}/BSD-3-Clause;md5=550794465ba0ec5312d6919e203a55f9 \
 "
-DEPENDS = "libbsd libpcre zlib libcap libusb squashfs-tools p7zip libselinux googletest"
+# squashfs-tools needed by extras/libext4_utils.mk
+DEPENDS = "boringssl libbsd libpcre zlib libcap libusb squashfs-tools p7zip libselinux googletest"
 
 SRCREV = "0462a4cf9e89bc8533cc16c9f7b38350bc66d793"
 SRC_URI = " \
@@ -46,6 +47,7 @@ SRC_URI += " \
     file://0003-Update-usage-of-usbdevfs_urb-to-match-new-kernel-UAP.patch \
     file://0004-adb-Fix-build-on-big-endian-systems.patch \
     file://0005-adb-Allow-adbd-to-be-run-as-root.patch \
+    file://0006-Revert-debian-patch-Fix-include-path.patch \
 "
 
 S = "${WORKDIR}/git"
@@ -68,7 +70,7 @@ CC:append:class-native = " -I${STAGING_INCDIR}"
 CC:append:class-nativesdk = " -I${STAGING_INCDIR}"
 
 PREREQUISITE_core = "liblog libbase libsparse liblog libcutils"
-TOOLS_TO_BUILD = "libcrypto_utils libadb libziparchive fastboot adb img2simg simg2img libbacktrace"
+TOOLS_TO_BUILD = "libadb libziparchive fastboot adb img2simg simg2img libbacktrace"
 TOOLS_TO_BUILD:append:class-target = " adbd"
 
 do_compile() {
@@ -109,11 +111,8 @@ do_compile() {
 
     export SRCDIR=${S}
 
-    oe_runmake -f ${S}/debian/external/boringssl/libcrypto.mk -C ${S}
-    oe_runmake -f ${S}/debian/external/libunwind/libunwind.mk -C ${S} CPU=${cpu}
-
     for tool in ${PREREQUISITE_core}; do
-      oe_runmake -f ${S}/debian/system/core/${tool}.mk -C ${S}
+      oe_runmake -f ${S}/debian/system/${tool}.mk -C ${S}
     done
 
     for i in `find ${S}/debian/system/extras/ -name "*.mk"`; do
@@ -122,9 +121,9 @@ do_compile() {
 
     for tool in ${TOOLS_TO_BUILD}; do
         if [ "$tool" = "libbacktrace" ]; then
-            oe_runmake -f ${S}/debian/system/core/${tool}.mk -C ${S} DEB_HOST_ARCH=${deb_host_arch}
+            oe_runmake -f ${S}/debian/system/${tool}.mk -C ${S} DEB_HOST_ARCH=${deb_host_arch}
         else
-            oe_runmake -f ${S}/debian/system/core/${tool}.mk -C ${S}
+            oe_runmake -f ${S}/debian/system/${tool}.mk -C ${S}
         fi
     done
 

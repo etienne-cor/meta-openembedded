@@ -1,0 +1,28 @@
+From 0580d9590884423a634574c43a1fd38936a9970c Mon Sep 17 00:00:00 2001
+From: Etienne Cordonnier <cordonnier.etienne@gmail.com>
+Date: Wed, 19 Apr 2023 22:41:39 +0200
+Subject: [PATCH] Revert debian patch "Fix include path"
+
+This patch is debian-specific and breaks the yocto build.
+
+This reverts commit 8d0327ec8071edd8f22e03f7ac2b4cbf493ded0b.
+---
+ system/extras/squashfs_utils/squashfs_utils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/system/extras/squashfs_utils/squashfs_utils.c b/system/extras/squashfs_utils/squashfs_utils.c
+index 9fc3066a..1db424b3 100644
+--- a/system/extras/squashfs_utils/squashfs_utils.c
++++ b/system/extras/squashfs_utils/squashfs_utils.c
+@@ -24,7 +24,7 @@
+ #include <string.h>
+ #include <unistd.h>
+ 
+-#include <squashfuse/squashfs_fs.h>
++#include "squashfs_fs.h"
+ 
+ #ifdef SQUASHFS_NO_KLOG
+ #include <stdio.h>
+-- 
+2.34.1
+
