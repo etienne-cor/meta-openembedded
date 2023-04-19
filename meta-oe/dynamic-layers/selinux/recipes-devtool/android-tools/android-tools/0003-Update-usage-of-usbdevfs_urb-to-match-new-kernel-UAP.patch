@@ -1,4 +1,4 @@
-From 02b6b6977d80af4b9b806054fadb5a06cedf011d Mon Sep 17 00:00:00 2001
+From 5dae9716ce071140b327e4d8b291bf68a06a690a Mon Sep 17 00:00:00 2001
 From: Etienne Cordonnier <ecordonnier@snap.com>
 Date: Tue, 14 Mar 2023 11:33:50 +0100
 Subject: [PATCH] Update usage of usbdevfs_urb to match new kernel UAPI
@@ -35,16 +35,15 @@ Signed-off-by: Anatol Pomozov <anatol.pomozov@gmail.com>
 
 [Backported on version 10]
 Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
-
 ---
- system/core/adb/client/usb_linux.cpp | 24 ++++++++++++++----------
+ packages/modules/adb/client/usb_linux.cpp | 24 +++++++++++++----------
  1 file changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/system/core/adb/client/usb_linux.cpp b/system/core/adb/client/usb_linux.cpp
-index 343e7b59..6a4479f3 100644
---- a/system/core/adb/client/usb_linux.cpp
-+++ b/system/core/adb/client/usb_linux.cpp
-@@ -71,8 +71,8 @@ struct usb_handle : public ::usb_handle {
+diff --git a/packages/modules/adb/client/usb_linux.cpp b/packages/modules/adb/client/usb_linux.cpp
+index 7f926266..235a21be 100644
+--- a/packages/modules/adb/client/usb_linux.cpp
++++ b/packages/modules/adb/client/usb_linux.cpp
+@@ -71,8 +71,8 @@ struct usb_handle {
      unsigned zero_mask;
      unsigned writeable = 1;
  
@@ -55,7 +54,7 @@ index 343e7b59..6a4479f3 100644
  
      bool urb_in_busy = false;
      bool urb_out_busy = false;
-@@ -305,7 +305,7 @@ static int usb_bulk_write(usb_handle* h, const void* data, int len) {
+@@ -303,7 +303,7 @@ static int usb_bulk_write(usb_handle* h, const void* data, int len) {
      std::unique_lock<std::mutex> lock(h->mutex);
      D("++ usb_bulk_write ++");
  
@@ -64,7 +63,7 @@ index 343e7b59..6a4479f3 100644
      memset(urb, 0, sizeof(*urb));
      urb->type = USBDEVFS_URB_TYPE_BULK;
      urb->endpoint = h->ep_out;
-@@ -344,7 +344,7 @@ static int usb_bulk_read(usb_handle* h, void* data, int len) {
+@@ -342,7 +342,7 @@ static int usb_bulk_read(usb_handle* h, void* data, int len) {
      std::unique_lock<std::mutex> lock(h->mutex);
      D("++ usb_bulk_read ++");
  
@@ -73,7 +72,7 @@ index 343e7b59..6a4479f3 100644
      memset(urb, 0, sizeof(*urb));
      urb->type = USBDEVFS_URB_TYPE_BULK;
      urb->endpoint = h->ep_in;
-@@ -389,7 +389,7 @@ static int usb_bulk_read(usb_handle* h, void* data, int len) {
+@@ -387,7 +387,7 @@ static int usb_bulk_read(usb_handle* h, void* data, int len) {
          }
          D("[ urb @%p status = %d, actual = %d ]", out, out->status, out->actual_length);
  
@@ -82,7 +81,7 @@ index 343e7b59..6a4479f3 100644
              D("[ reap urb - IN complete ]");
              h->urb_in_busy = false;
              if (urb->status != 0) {
-@@ -398,7 +398,7 @@ static int usb_bulk_read(usb_handle* h, void* data, int len) {
+@@ -396,7 +396,7 @@ static int usb_bulk_read(usb_handle* h, void* data, int len) {
              }
              return urb->actual_length;
          }
@@ -91,7 +90,7 @@ index 343e7b59..6a4479f3 100644
              D("[ reap urb - OUT compelete ]");
              h->urb_out_busy = false;
              h->cv.notify_all();
-@@ -502,10 +502,10 @@ void usb_kick(usb_handle* h) {
+@@ -500,10 +500,10 @@ void usb_kick(usb_handle* h) {
              ** but this ensures that a reader blocked on REAPURB
              ** will get unblocked
              */
@@ -106,7 +105,7 @@ index 343e7b59..6a4479f3 100644
              h->urb_in_busy = false;
              h->urb_out_busy = false;
              h->cv.notify_all();
-@@ -521,6 +521,8 @@ int usb_close(usb_handle* h) {
+@@ -519,6 +519,8 @@ int usb_close(usb_handle* h) {
  
      D("-- usb close %p (fd = %d) --", h, h->fd);
  
@@ -115,7 +114,7 @@ index 343e7b59..6a4479f3 100644
      delete h;
  
      return 0;
-@@ -556,6 +558,8 @@ static void register_device(const char* dev_name, const char* dev_path, unsigned
+@@ -572,6 +574,8 @@ static void register_device(const char* dev_name, const char* dev_path, unsigned
      usb->ep_out = ep_out;
      usb->zero_mask = zero_mask;
      usb->max_packet_size = max_packet_size;
@@ -124,3 +123,6 @@ index 343e7b59..6a4479f3 100644
  
      // Initialize mark so we don't get garbage collected after the device scan.
      usb->mark = true;
+-- 
+2.36.1.vfs.0.0
+

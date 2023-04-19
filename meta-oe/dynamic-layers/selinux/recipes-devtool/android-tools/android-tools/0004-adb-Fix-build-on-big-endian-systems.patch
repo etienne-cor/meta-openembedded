@@ -1,4 +1,4 @@
-From e4a29888cb52c1eafd3ab57a6e220b38147ecfbe Mon Sep 17 00:00:00 2001
+From 580745992de590c51a49351d285c5b725556862f Mon Sep 17 00:00:00 2001
 From: Etienne Cordonnier <ecordonnier@snap.com>
 Date: Tue, 14 Mar 2023 13:39:23 +0100
 Subject: [PATCH] adb: Fix build on big endian systems
@@ -19,16 +19,15 @@ them to be used when initializing structures.
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 [Forward-ported to version 29]
 Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
-
 ---
- system/core/adb/daemon/usb_ffs.cpp | 11 +++++++++--
+ packages/modules/adb/daemon/usb_ffs.cpp | 11 +++++++++--
  1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/system/core/adb/daemon/usb_ffs.cpp b/system/core/adb/daemon/usb_ffs.cpp
-index b19fa5d5..ef2291ca 100644
---- a/system/core/adb/daemon/usb_ffs.cpp
-+++ b/system/core/adb/daemon/usb_ffs.cpp
-@@ -39,8 +39,15 @@
+diff --git a/packages/modules/adb/daemon/usb_ffs.cpp b/packages/modules/adb/daemon/usb_ffs.cpp
+index e538ca88..37f7b59d 100644
+--- a/packages/modules/adb/daemon/usb_ffs.cpp
++++ b/packages/modules/adb/daemon/usb_ffs.cpp
+@@ -40,8 +40,15 @@
  
  #define USB_EXT_PROP_UNICODE 1
  
@@ -46,3 +45,6 @@ index b19fa5d5..ef2291ca 100644
  
  // clang-format off
  struct func_desc {
+-- 
+2.36.1.vfs.0.0
+

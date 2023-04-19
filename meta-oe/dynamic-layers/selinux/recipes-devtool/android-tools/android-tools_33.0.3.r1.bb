@@ -9,43 +9,37 @@ LIC_FILES_CHKSUM = " \
 "
 DEPENDS = "libbsd libpcre zlib libcap libusb squashfs-tools p7zip libselinux googletest"
 
-SRCREV_core = "abfd66fafcbb691d7860df059f1df1c9b1ef29da"
-
+SRCREV = "0462a4cf9e89bc8533cc16c9f7b38350bc66d793"
 SRC_URI = " \
-    git://salsa.debian.org/android-tools-team/android-platform-tools;name=core;protocol=https;nobranch=1 \
+    git://salsa.debian.org/android-tools-team/android-platform-tools;protocol=https;nobranch=1 \
 "
 
 # Patches copied from android-platform-tools/debian/patches
 # and applied in the order defined by the file debian/patches/series
 SRC_URI += " \
-    file://debian/external/libunwind/user_pt_regs.patch \
-    file://debian/external/libunwind/legacy_built-in_sync_functions.patch \
-    file://debian/external/libunwind/20150704-CVE-2015-3239_dwarf_i.h.patch \
-    \
-    file://debian/system/core/move-log-file-to-proper-dir.patch \
-    file://debian/system/core/Added-missing-headers.patch \
-    file://debian/system/core/libusb-header-path.patch \
-    file://debian/system/core/stdatomic.patch \
-    file://debian/system/core/Nonnull.patch \
-    file://debian/system/core/Vector-cast.patch \
-    file://debian/system/core/throw-exception-on-unknown-os.patch \
-    file://debian/system/core/simg_dump-python3.patch \
-    file://debian/system/core/fix-attribute-issue-with-gcc.patch \
-    file://debian/system/core/fix-gettid-exception-declaration.patch \
-    file://debian/system/core/fix-build-on-non-x86.patch \
-    file://debian/system/core/add-missing-headers.patch \
-    file://debian/system/core/hard-code-build-number.patch \
-    file://debian/system/core/stub-out-fastdeploy.patch \
-    file://debian/system/core/fix-standard-namespace-errors.patch \
-    file://debian/system/core/Add-riscv64-support.patch \
-    \
+    file://debian/system/move-log-file-to-proper-dir.patch \
+    file://debian/system/Added-missing-headers.patch \
+    file://debian/system/libusb-header-path.patch \
+    file://debian/system/stdatomic.patch \
+    file://debian/system/throw-exception-on-unknown-os.patch \
+    file://debian/system/add-missing-headers.patch \
+    file://debian/system/hard-code-build-number.patch \
+    file://debian/system/stub-out-fastdeploy.patch \
+    file://debian/system/fix-standard-namespace-errors.patch \
+    file://debian/system/workaround__builtin_available.patch \
+    file://debian/system/unwindstack-porting.patch \
+    file://debian/system/support-mips.patch \
+    file://debian/system/Revert-Remove-mips-build.patch \
+    file://debian/system/Revert-Remove-mips-support-fr.patch \
+    file://debian/system/Fix-include-path.patch \
+    file://debian/system/Implement-const_iterator-operator.patch \
 "
 
 # patches which don't come from debian
 SRC_URI += " \
     file://rules_yocto.mk;subdir=git \
     file://android-tools-adbd.service \
-    file://adbd.mk;subdir=git/debian/system/core \
+    file://adbd.mk;subdir=git/debian/system \
     file://remount \
     file://0001-Fixes-for-yocto-build.patch \
     file://0002-android-tools-modifications-to-make-it-build-in-yoct.patch \

@@ -1,23 +1,25 @@
-From 4ef35041ba5c02df48c31f2382e7c3c4316ad936 Mon Sep 17 00:00:00 2001
+From 1ed669c95b5ed72fe82e725c1d3be8fc16de5717 Mon Sep 17 00:00:00 2001
 From: Etienne Cordonnier <ecordonnier@snap.com>
-Date: Tue, 14 Mar 2023 13:53:51 +0100
+Date: Wed, 19 Apr 2023 18:02:21 +0200
 Subject: [PATCH] adb: Allow adbd to be run as root
 
 Signed-off-by: Etienne Cordonnier <ecordonnier@snap.com>
-
 ---
- system/core/adb/daemon/main.cpp | 1 +
+ packages/modules/adb/daemon/main.cpp | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/system/core/adb/daemon/main.cpp b/system/core/adb/daemon/main.cpp
-index e807d13d..309663a2 100644
---- a/system/core/adb/daemon/main.cpp
-+++ b/system/core/adb/daemon/main.cpp
-@@ -75,6 +75,7 @@ static bool should_drop_capabilities_bounding_set() {
- }
+diff --git a/packages/modules/adb/daemon/main.cpp b/packages/modules/adb/daemon/main.cpp
+index 0e01bde6..7ddfefe9 100644
+--- a/packages/modules/adb/daemon/main.cpp
++++ b/packages/modules/adb/daemon/main.cpp
+@@ -64,6 +64,7 @@
+ static const char* root_seclabel = nullptr;
  
  static bool should_drop_privileges() {
 +    return true;
-     // "adb root" not allowed, always drop privileges.
-     if (!ALLOW_ADBD_ROOT && !is_device_unlocked()) return true;
- 
+     // The properties that affect `adb root` and `adb unroot` are ro.secure and
+     // ro.debuggable. In this context the names don't make the expected behavior
+     // particularly obvious.
+-- 
+2.36.1.vfs.0.0
+

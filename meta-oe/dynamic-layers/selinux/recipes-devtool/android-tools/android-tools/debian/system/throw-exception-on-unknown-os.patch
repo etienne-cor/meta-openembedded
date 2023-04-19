@@ -2,9 +2,9 @@ Description: Turn #error into exceptions
  So the library can be built on non-Linux platforms too, although can't
  guarauntee its functionality regarding that piece of code.
 Forwarded: not-needed
---- a/system/core/base/file.cpp
-+++ b/system/core/base/file.cpp
-@@ -422,7 +422,8 @@
+--- a/system/libbase/file.cpp
++++ b/system/libbase/file.cpp
+@@ -461,7 +461,8 @@
    path[PATH_MAX - 1] = 0;
    return path;
  #else
