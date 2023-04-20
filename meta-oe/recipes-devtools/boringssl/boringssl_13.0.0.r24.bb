@@ -36,6 +36,8 @@ COMPATIBLE_HOST:powerpc64le = "(null)"
 CC:append:class-native = " -I${STAGING_INCDIR}"
 CC:append:class-nativesdk = " -I${STAGING_INCDIR}"
 
+CPPFLAGS:append = " -fPIC"
+
 #PREREQUISITE_core = "liblog libbase libsparse liblog libcutils"
 PREREQUISITE_core = ""
 TOOLS_TO_BUILD = "libcrypto_utils"
@@ -82,6 +84,11 @@ do_compile() {
 }
 
 do_install() {
+    # deploy to ${includedir}/android to avoid collision with openssl
+    install -d  ${D}${includedir}/android
+    install -d  ${D}${includedir}/android/openssl
+    install ${S}/src/include/openssl/*h ${D}${includedir}/android/openssl
+
     install -d  ${D}${libdir}/android/
     install -m0755 ${S}/debian/out/*.so.* ${D}${libdir}/android/
 }
