@@ -1,0 +1,39 @@
+From 0064901aaeb30e95321469178bc96d441adc598d Mon Sep 17 00:00:00 2001
+From: Etienne Cordonnier <ecordonnier@snap.com>
+Date: Thu, 20 Apr 2023 16:34:51 +0200
+Subject: [PATCH] link to boringssl instead of openssl
+
+---
+ debian/system/adb.mk      | 2 +-
+ debian/system/fastboot.mk | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/debian/system/adb.mk b/debian/system/adb.mk
+index ed9a63fb..b9e152a3 100644
+--- a/debian/system/adb.mk
++++ b/debian/system/adb.mk
+@@ -51,7 +51,7 @@ LDFLAGS += \
+   -lbase \
+   -lbrotlidec \
+   -lbrotlienc \
+-  -lcrypto \
++  -llibcrypto.so.0 \
+   -lcutils \
+   -llog \
+   -llz4 \
+diff --git a/debian/system/fastboot.mk b/debian/system/fastboot.mk
+index a05fc1a9..95d3c4dd 100644
+--- a/debian/system/fastboot.mk
++++ b/debian/system/fastboot.mk
+@@ -55,7 +55,7 @@ LDFLAGS += \
+   -L/usr/lib/$(DEB_HOST_MULTIARCH)/android \
+   -Wl,-rpath='$$ORIGIN/../lib/android' \
+   -lbase \
+-  -lcrypto \
++  -l:libcrypto.so.0 \
+   -lcutils \
+   -llog \
+   -lpthread \
+-- 
+2.36.1.vfs.0.0
+
