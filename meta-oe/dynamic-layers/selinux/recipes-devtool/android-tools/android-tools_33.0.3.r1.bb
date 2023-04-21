@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = " \
     file://${COMMON_LICENSE_DIR}/BSD-3-Clause;md5=550794465ba0ec5312d6919e203a55f9 \
 "
 # squashfs-tools needed by extras/libext4_utils.mk
-DEPENDS = "boringssl libbsd libpcre zlib libcap libusb squashfs-tools p7zip libselinux googletest protobuf protobuf-c-native brotli"
+DEPENDS = "boringssl libbsd libpcre libcap libusb squashfs-tools p7zip googletest protobuf protobuf-c-native brotli"
 
 SRCREV = "0462a4cf9e89bc8533cc16c9f7b38350bc66d793"
 SRC_URI = " \

@@ -1,31 +1,75 @@
-From 0064901aaeb30e95321469178bc96d441adc598d Mon Sep 17 00:00:00 2001
+From a17297de0ee1ef1afa319078882b71faa52d90ed Mon Sep 17 00:00:00 2001
 From: Etienne Cordonnier <ecordonnier@snap.com>
 Date: Thu, 20 Apr 2023 16:34:51 +0200
 Subject: [PATCH] link to boringssl instead of openssl
 
+fix GCC build error due to sa_sigaction ( https://stackoverflow.com/questions/65288624/how-to-initialize-union-in-struct-with-c20-designated-initializer )
 ---
- debian/system/adb.mk      | 2 +-
- debian/system/fastboot.mk | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ debian/system/adb.mk                               | 6 +++---
+ debian/system/extras/libext4_utils.mk              | 2 +-
+ debian/system/fastboot.mk                          | 4 ++--
+ debian/system/libadb.mk                            | 2 +-
+ debian/system/libbacktrace.mk                      | 1 -
+ debian/system/libcrypto_utils.mk                   | 2 +-
+ debian/system/libutils.mk                          | 1 -
+ system/unwinding/libunwindstack/ThreadUnwinder.cpp | 6 ++++--
+ 8 files changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/debian/system/adb.mk b/debian/system/adb.mk
-index ed9a63fb..b9e152a3 100644
+index ed9a63fb..2d2f547c 100644
 --- a/debian/system/adb.mk
 +++ b/debian/system/adb.mk
-@@ -51,7 +51,7 @@ LDFLAGS += \
+@@ -42,7 +42,7 @@ CPPFLAGS += \
+   -Isystem/libbase/include \
+   -Isystem/libziparchive/include \
+   \
+-  -I/usr/include/android \
++  -I$SYSROOT/usr/include/android \
+ 
+ LDFLAGS += \
+   -Ldebian/out/system \
+@@ -51,13 +51,13 @@ LDFLAGS += \
    -lbase \
    -lbrotlidec \
    -lbrotlienc \
 -  -lcrypto \
-+  -llibcrypto.so.0 \
++  -l:libcrypto.so.0 \
    -lcutils \
    -llog \
    -llz4 \
+   -lprotobuf \
+   -lpthread \
+-  -lssl \
++  -l:libssl.so.0 \
+   -lusb-1.0 \
+   -lziparchive \
+   -lzstd \
+diff --git a/debian/system/extras/libext4_utils.mk b/debian/system/extras/libext4_utils.mk
+index a37eb98b..5cebbb2a 100644
+--- a/debian/system/extras/libext4_utils.mk
++++ b/debian/system/extras/libext4_utils.mk
+@@ -27,7 +27,7 @@ CPPFLAGS += \
+   -D_LARGEFILE64_SOURCE \
+   -DFEC_NO_KLOG \
+   -DSQUASHFS_NO_KLOG \
+-  -I/usr/include/android \
++  -I$SYSROOT/usr/include/android \
+   -Isystem/core/libcutils/include \
+   -Isystem/core/libsparse/include \
+   -Isystem/extras/ext4_utils/include \
 diff --git a/debian/system/fastboot.mk b/debian/system/fastboot.mk
-index a05fc1a9..95d3c4dd 100644
+index a05fc1a9..155c2e60 100644
 --- a/debian/system/fastboot.mk
 +++ b/debian/system/fastboot.mk
-@@ -55,7 +55,7 @@ LDFLAGS += \
+@@ -48,14 +48,14 @@ CPPFLAGS += \
+   -Isystem/libziparchive/include \
+   -Isystem/tools/mkbootimg/include/bootimg \
+   \
+-  -I/usr/include/android \
++  -I$SYSROOT/usr/include/android \
+ 
+ LDFLAGS += \
+   -Ldebian/out/system \
    -L/usr/lib/$(DEB_HOST_MULTIARCH)/android \
    -Wl,-rpath='$$ORIGIN/../lib/android' \
    -lbase \
@@ -34,6 +78,77 @@ index a05fc1a9..95d3c4dd 100644
    -lcutils \
    -llog \
    -lpthread \
+diff --git a/debian/system/libadb.mk b/debian/system/libadb.mk
+index fd8be942..3062a5c0 100644
+--- a/debian/system/libadb.mk
++++ b/debian/system/libadb.mk
+@@ -110,7 +110,7 @@ CPPFLAGS += \
+   -Isystem/core/libcutils/include \
+   -Isystem/libbase/include \
+   \
+-  -I/usr/include/android \
++  -I$SYSROOT/usr/include/android \
+ 
+ debian/out/system/$(NAME).a: $(OBJECTS)
+ 	ar -rcs $@ $^
+diff --git a/debian/system/libbacktrace.mk b/debian/system/libbacktrace.mk
+index 6fc1d876..759240df 100644
+--- a/debian/system/libbacktrace.mk
++++ b/debian/system/libbacktrace.mk
+@@ -1,5 +1,4 @@
+ include rules_yocto.mk
+-include /usr/share/dpkg/architecture.mk
+ 
+ NAME = libbacktrace
+ 
+diff --git a/debian/system/libcrypto_utils.mk b/debian/system/libcrypto_utils.mk
+index addf4729..51c80075 100644
+--- a/debian/system/libcrypto_utils.mk
++++ b/debian/system/libcrypto_utils.mk
+@@ -8,7 +8,7 @@ CPPFLAGS += \
+   -Isystem/core/include \
+   -Isystem/core/libcrypto_utils/include \
+   \
+-  -I/usr/include/android \
++  -I$SYSROOT/usr/include/android \
+ 
+ debian/out/system/$(NAME).a: $(OBJECTS)
+ 	ar -rcs $@ $^
+diff --git a/debian/system/libutils.mk b/debian/system/libutils.mk
+index 817b3974..bb65dad5 100644
+--- a/debian/system/libutils.mk
++++ b/debian/system/libutils.mk
+@@ -1,4 +1,3 @@
+-include /usr/share/dpkg/architecture.mk
+ 
+ NAME = libutils
+ 
+diff --git a/system/unwinding/libunwindstack/ThreadUnwinder.cpp b/system/unwinding/libunwindstack/ThreadUnwinder.cpp
+index 7b452610..070a5431 100644
+--- a/system/unwinding/libunwindstack/ThreadUnwinder.cpp
++++ b/system/unwinding/libunwindstack/ThreadUnwinder.cpp
+@@ -91,8 +91,9 @@ ThreadEntry* ThreadUnwinder::SendSignalToThread(int signal, pid_t tid) {
+ 
+   ThreadEntry* entry = ThreadEntry::Get(tid);
+   entry->Lock();
+-  struct sigaction new_action = {.sa_sigaction = SignalHandler,
++  struct sigaction new_action = {
+                                  .sa_flags = SA_RESTART | SA_SIGINFO | SA_ONSTACK};
++  new_action.sa_sigaction = SignalHandler;
+   struct sigaction old_action = {};
+   sigemptyset(&new_action.sa_mask);
+   if (sigaction(signal, &new_action, &old_action) != 0) {
+@@ -128,8 +129,9 @@ ThreadEntry* ThreadUnwinder::SendSignalToThread(int signal, pid_t tid) {
+     // within the timeout. Add a signal handler that's simply going to log
+     // something so that we don't crash if the signal eventually gets
+     // delivered. Only do this if there isn't already an action set up.
+-    struct sigaction log_action = {.sa_sigaction = SignalLogOnly,
++    struct sigaction log_action = {
+                                    .sa_flags = SA_RESTART | SA_SIGINFO | SA_ONSTACK};
++    log_action.sa_sigaction = SignalLogOnly;
+     sigemptyset(&log_action.sa_mask);
+     sigaction(signal, &log_action, nullptr);
+   } else {
 -- 
 2.36.1.vfs.0.0
 
